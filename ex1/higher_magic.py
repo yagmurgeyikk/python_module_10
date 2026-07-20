@@ -6,5 +6,13 @@ def spell_combiner(spell1, spell2):
     return combiner
 
 
+def power_amplifier(base_spell, multiplier):
+    def power(target, power):
+        result = power * multiplier
+        result_end = base_spell(result)
+        return result_end
+    return power
+
+
 def conditional_caster(condition, spell):
     pass
