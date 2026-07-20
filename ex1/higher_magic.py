@@ -15,4 +15,10 @@ def power_amplifier(base_spell, multiplier):
 
 
 def conditional_caster(condition, spell):
-    pass
+    def conditional(target, power):
+        result = condition(target, power)
+        if result is True:
+            return spell(target, power)
+        else:
+            return ("Spell fizzled")
+    return conditional
