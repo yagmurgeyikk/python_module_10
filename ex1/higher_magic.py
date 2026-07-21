@@ -34,3 +34,20 @@ def spell_sequence(spells: list[Callable]) -> Callable:
             result_list.append(elements(target, power))
         return result_list
     return sequence
+
+
+def main() -> None:
+    print("Testing spell combiner...")
+
+    def fireball():
+        print("Fireball hits Dragon, ", end="")
+
+    def heal():
+        print("Heals Dragon")
+
+    print("Combined spell result: ", end="")
+    print(f"{spell_combiner(fireball(), heal())}")
+
+
+if __name__ == "__main__":
+    main()
