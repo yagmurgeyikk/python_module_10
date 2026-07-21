@@ -2,7 +2,7 @@ from collections.abc import Callable
 
 
 def spell_combiner(spell1: Callable, spell2: Callable) -> Callable:
-    def combiner(target, power):
+    def combiner(target, power=None):
         result_one = spell1(target, power)
         result_two = spell2(target, power)
         return (result_one, result_two)
@@ -39,14 +39,16 @@ def spell_sequence(spells: list[Callable]) -> Callable:
 def main() -> None:
     print("Testing spell combiner...")
 
-    def fireball():
-        print("Fireball hits Dragon, ", end="")
+    def fireball(target, power):
+        return (f"Fireball hits {target}")
 
-    def heal():
-        print("Heals Dragon")
+    def heal(target, power):
+        return (f"Heals {target}")
 
+    func = spell_combiner(fireball, heal)
+    result = func("Dragon")
     print("Combined spell result: ", end="")
-    print(f"{spell_combiner(fireball(), heal())}")
+    print(result)
 
 
 if __name__ == "__main__":
