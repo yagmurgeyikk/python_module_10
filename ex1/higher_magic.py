@@ -9,7 +9,7 @@ def spell_combiner(spell1, spell2):
 def power_amplifier(base_spell, multiplier):
     def power(target, power):
         result = power * multiplier
-        result_end = base_spell(result)
+        result_end = base_spell(target, result)
         return result_end
     return power
 
@@ -22,3 +22,12 @@ def conditional_caster(condition, spell):
         else:
             return ("Spell fizzled")
     return conditional
+
+
+def spell_sequence(spells):
+    def sequence(target, power):
+        result_list = []
+        for elements in spells:
+            result_list.append(elements(target, power))
+        return result_list
+    return sequence
