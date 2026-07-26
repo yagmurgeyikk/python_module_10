@@ -20,11 +20,23 @@ def spell_timer(func: Callable) -> Callable:
 def power_validator(min_power: int) -> Callable:
     @wraps(min_power)
     def wrap(power: int):
-        pass
+        if power >= min_power:
+            return wrap
+        else:
+            return ("Insufficient power for this spell")
+    return power_validator
+# sonra bak
 
 
 def retry_spell(max_attempts: int) -> Callable:
-    pass
+    i = 0
+    for i in max_attempts:
+        try:
+            return ("Hello")
+        except Exception:
+            print(f"Spell failed, retrying... (attempt {i}/{max_attempts}")
+    return retry_spell
+# sonra düzelt
 
 
 class MageGuild:
