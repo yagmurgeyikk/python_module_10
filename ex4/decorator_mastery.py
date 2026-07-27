@@ -1,11 +1,12 @@
 from collections.abc import Callable
 import time
 from functools import wraps
+from typing import Any
 
 
-def spell_timer(func: Callable) -> Callable:
+def spell_timer(func: Callable[[], Any]) -> Callable[[], Any]:
     @wraps(func)
-    def wrap():
+    def wrap() -> Any:
         name = func.__name__
         print(f"Casting {name}")
         start = time.time()
@@ -17,10 +18,11 @@ def spell_timer(func: Callable) -> Callable:
     return wrap
 
 
-def power_validator(min_power: int) -> Callable:
-    def validator(func) -> Callable:
+def power_validator(min_power: int) -> Callable[[Callable[..., Any]],
+                                                Callable[..., Any]]:
+    def validator(func: Callable[..., Any]) -> Callable[..., Any]:
         @wraps(func)
-        def wrap(self, spell_name, power: int):
+        def wrap(self: Any, spell_name: str, power: int) -> Any:
             if power >= min_power:
                 return func(self, spell_name, power)
             else:
@@ -29,10 +31,11 @@ def power_validator(min_power: int) -> Callable:
     return validator
 
 
-def retry_spell(max_attempts: int) -> Callable:
-    def retry(func: Callable) -> Callable:
+def retry_spell(max_attempts: int) -> Callable[[Callable[[], Any]],
+                                               Callable[[], Any]]:
+    def retry(func: Callable[[], Any]) -> Callable[[], Any]:
         @wraps(func)
-        def wrap():
+        def wrap() -> Any:
             counter = 1
             while counter <= max_attempts:
                 try:
@@ -52,7 +55,7 @@ class MageGuild:
         length = len(name)
         if length <= 3:
             return False
-        if not name.isalpha() and name.strip():
+        if not name.isalpha() and name.isspace():
             return False
         return True
 
@@ -61,9 +64,9 @@ class MageGuild:
         return (f"Successfully cast {spell_name} with <{power}> power")
 
 
-def main():
+def main() -> None:
     @spell_timer
-    def fireball():
+    def fireball() -> str:
         time.sleep(3)
         return ("Fireball cast!")
     print("Testing spell timer...")
@@ -72,7 +75,7 @@ def main():
     print()
     print("Testing retrying spell...")
 
-    def func():
+    def func() -> Any:
         int("abc")
     res = retry_spell(3)(func)
     result = res()

@@ -10,22 +10,24 @@ def spell_reducer(spells: list[int], operation: str) -> int:
         return 0
 
     if operation == "add":
-        total = reduce(operator.add, spells)
+        total = int(reduce(operator.add, spells))
         return total
     if operation == "multiply":
-        multi = reduce(operator.mul, spells)
+        multi = int(reduce(operator.mul, spells))
         return multi
     if operation == "max":
-        maxi = reduce(max, spells)
+        maxi = int(reduce(max, spells))
         return maxi
     if operation == "min":
-        mini = reduce(min, spells)
+        mini = int(reduce(min, spells))
         return mini
     raise ValueError("Unspecified operation")
 
 
-def partial_enchanter(base_enchantment: Callable) -> dict[str, Callable]:
-    enchanter = {
+def partial_enchanter(
+        base_enchantment: Callable
+        [..., str]) -> dict[str, Callable[[str], str]]:
+    enchanter: dict[str, Callable[[str], str]] = {
         "fire": partial(base_enchantment, power=50, element="fire"),
         "water": partial(base_enchantment, power=50, element="water"),
         "soil": partial(base_enchantment, power=50, element="soil")
@@ -44,7 +46,7 @@ def memoized_fibonacci(n: int) -> int:
 
 def spell_dispatcher() -> Callable[[Any], str]:
     @singledispatch
-    def dispatcher(spell: Any):
+    def dispatcher(spell: Any) -> str:
         return (f"Unknown spell type: {type(spell).__name__}")
 
     @dispatcher.register(int)
@@ -56,20 +58,20 @@ def spell_dispatcher() -> Callable[[Any], str]:
         return (f"{text}")
 
     @dispatcher.register(list)
-    def multi_cast(data_list: list) -> str:
+    def multi_cast(data_list: list[Any]) -> str:
         return (f"{len(data_list)} spells")
     return dispatcher
 
 
-def main():
+def main() -> None:
     try:
         print("Testing spell reducer...")
-        test = [40, 17, 23, 5, 15]
-        print(f"Sum: {spell_reducer(test, 'add')}")
-        print(f"Product: {spell_reducer(test, 'multiply')}")
-        print(f"Max: {spell_reducer(test, 'max')}")
-        print(f"Min: {spell_reducer(test, 'min')}")
-        print(f"Sum: {spell_reducer(test, 'difference')}")
+        numbers = [40, 17, 23, 5, 15]
+        print(f"Sum: {spell_reducer(numbers, 'add')}")
+        print(f"Product: {spell_reducer(numbers, 'multiply')}")
+        print(f"Max: {spell_reducer(numbers, 'max')}")
+        print(f"Min: {spell_reducer(numbers, 'min')}")
+        print(f"Sum: {spell_reducer(numbers, 'difference')}")
     except ValueError as e:
         print(f"Error: {e}")
     print()
@@ -78,8 +80,8 @@ def main():
     def base_enchantment(power: int, element: str, target: str) -> str:
         return (f"Applied {power} power {element} enchantment to {target}.")
     test = partial_enchanter(base_enchantment)
-    print(test["soil"](target="Earth Golem"))
-    print(test["fire"](target="Dragon Shield"))
+    print(test["soil"]("Earth Golem"))
+    print(test["fire"]("Dragon Shield"))
 
     print("Testing memoized fibonacci...")
     print(f"Fib(0): {memoized_fibonacci(0)}")
