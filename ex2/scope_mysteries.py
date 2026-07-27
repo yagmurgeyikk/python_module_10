@@ -1,44 +1,45 @@
 from collections.abc import Callable
+from typing import Any
 
 
-def mage_counter() -> Callable:
+def mage_counter() -> Callable[[], int]:
     count = 0
 
-    def counter():
+    def counter() -> int:
         nonlocal count
         count = count + 1
         return count
     return counter
 
 
-def spell_accumulator(initial_power: int) -> Callable:
-    def accumulator(power: int):
+def spell_accumulator(initial_power: int) -> Callable[[int], int]:
+    def accumulator(power: int) -> int:
         nonlocal initial_power
         initial_power = initial_power + power
         return initial_power
     return accumulator
 
 
-def enchantment_factory(enchantment_type: str) -> Callable:
-    def factory(goods: str):
+def enchantment_factory(enchantment_type: str) -> Callable[[str], str]:
+    def factory(goods: str) -> str:
         return (f"{enchantment_type} {goods}")
     return factory
 
 
-def memory_vault() -> dict[str, Callable]:
-    memory = {}
+def memory_vault() -> dict[str, Callable[..., Any]]:
+    memory: dict[str, int] = {}
 
-    def store(key: str, value: int):
+    def store(key: str, value: int) -> None:
         memory[key] = value
 
-    def recall(key: str):
+    def recall(key: str) -> int | str:
         if key in memory:
             return memory[key]
         return ("Memory not found")
     return {'store': store, 'recall': recall}
 
 
-def main():
+def main() -> None:
     print("Testing mage counter...")
     test_a = mage_counter()
     print(f"counter_a call 1: {test_a()}")
@@ -60,13 +61,13 @@ def main():
     enchantment = "Flaming"
     factory = enchantment_factory(enchantment)
     goods = "Sword"
-    func = factory(goods)
-    print(func)
+    one_func = factory(goods)
+    print(one_func)
     enchantment = "Frozen"
     factory = enchantment_factory(enchantment)
     goods = "Shield"
-    func = factory(goods)
-    print(func)
+    two_func = factory(goods)
+    print(two_func)
     print()
     print("Testing memory vault...")
     memory = memory_vault()
