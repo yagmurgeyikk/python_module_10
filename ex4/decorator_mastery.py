@@ -20,9 +20,9 @@ def spell_timer(func: Callable) -> Callable:
 def power_validator(min_power: int) -> Callable:
     def validator(func) -> Callable:
         @wraps(func)
-        def wrap(power: int):
+        def wrap(self, spell_name, power: int):
             if power >= min_power:
-                return func()
+                return func(self, spell_name, power)
             else:
                 return ("Insufficient power for this spell")
         return wrap
@@ -30,25 +30,35 @@ def power_validator(min_power: int) -> Callable:
 
 
 def retry_spell(max_attempts: int) -> Callable:
-    def retry():
-        counter = 1
-        while counter <= max_attempts:
-            try:
-                int("abc")
-            except Exception:
-                print(f"Spell failed, retrying... "
-                      f"(attempt {counter}/{max_attempts})")
-            counter = counter + 1
-        return "Spell casting failed after max_attempts attempts"
+    def retry(func: Callable) -> Callable:
+        @wraps(func)
+        def wrap():
+            counter = 1
+            while counter <= max_attempts:
+                try:
+                    return func()
+                except Exception:
+                    print(f"Spell failed, retrying... "
+                          f"(attempt {counter}/{max_attempts})")
+                counter = counter + 1
+            return "Spell casting failed after max_attempts attempts"
+        return wrap
     return retry
 
 
 class MageGuild:
+    @staticmethod
     def validate_mage_name(name: str) -> bool:
-        pass
+        length = len(name)
+        if length <= 3:
+            return False
+        if not name.isalpha() and name.strip():
+            return False
+        return True
 
+    @power_validator(min_power=10)
     def cast_spell(self, spell_name: str, power: int) -> str:
-        pass
+        return (f"Successfully cast {spell_name} with <{power}> power")
 
 
 def main():
@@ -59,21 +69,25 @@ def main():
     print("Testing spell timer...")
     result = fireball()
     print(f"Result: {result}")
+    print()
+    print("Testing retrying spell...")
 
     def func():
-        return ("power is higher than the specified number")
-    print("Testing power validator...")
-    res = power_validator(54)
-    result = res(func)
-    print(result(23))
-
-    print("Testing retry_spell")
-    res = retry_spell(3)
+        int("abc")
+    res = retry_spell(3)(func)
     result = res()
     print(result)
-
-
-
+    print()
+    print("Testing MageGuild...")
+    obj = MageGuild()
+    res_one = obj.validate_mage_name("yagmur")
+    res_two = obj.validate_mage_name("yg")
+    print(res_one)
+    print(res_two)
+    res_three = obj.cast_spell("Lightning", 15)
+    res_four = obj.cast_spell("Lightning", 7)
+    print(res_three)
+    print(res_four)
 
 
 if __name__ == "__main__":
