@@ -5,11 +5,11 @@ from functools import wraps
 
 def spell_timer(func: Callable) -> Callable:
     @wraps(func)
-    def wrap(number: int):
+    def wrap():
         name = func.__name__
         print(f"Casting {name}")
         start = time.time()
-        result = func(number)
+        result = func()
         end = time.time()
         func_time = end - start
         print(f"Spell completed in {func_time:.3f} seconds")
@@ -18,25 +18,29 @@ def spell_timer(func: Callable) -> Callable:
 
 
 def power_validator(min_power: int) -> Callable:
-    @wraps(min_power)
-    def wrap(power: int):
-        if power >= min_power:
-            return wrap
-        else:
-            return ("Insufficient power for this spell")
-    return power_validator
-# sonra bak
+    def validator(func) -> Callable:
+        @wraps(func)
+        def wrap(power: int):
+            if power >= min_power:
+                return func()
+            else:
+                return ("Insufficient power for this spell")
+        return wrap
+    return validator
 
 
 def retry_spell(max_attempts: int) -> Callable:
-    i = 0
-    for i in max_attempts:
-        try:
-            return ("Hello")
-        except Exception:
-            print(f"Spell failed, retrying... (attempt {i}/{max_attempts}")
-    return retry_spell
-# sonra düzelt
+    def retry():
+        counter = 1
+        while counter <= max_attempts:
+            try:
+                int("abc")
+            except Exception:
+                print(f"Spell failed, retrying... "
+                      f"(attempt {counter}/{max_attempts})")
+            counter = counter + 1
+        return "Spell casting failed after max_attempts attempts"
+    return retry
 
 
 class MageGuild:
@@ -48,13 +52,28 @@ class MageGuild:
 
 
 def main():
-    def fireball(number: int):
+    @spell_timer
+    def fireball():
         time.sleep(3)
-        return (f"Fireball cast! {number}")
+        return ("Fireball cast!")
     print("Testing spell timer...")
-    result_timer = spell_timer(fireball)
-    result = result_timer(34)
+    result = fireball()
     print(f"Result: {result}")
+
+    def func():
+        return ("power is higher than the specified number")
+    print("Testing power validator...")
+    res = power_validator(54)
+    result = res(func)
+    print(result(23))
+
+    print("Testing retry_spell")
+    res = retry_spell(3)
+    result = res()
+    print(result)
+
+
+
 
 
 if __name__ == "__main__":
