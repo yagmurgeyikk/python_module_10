@@ -59,7 +59,7 @@ def main() -> None:
     result = func("Dragon", 5)
     print("Combined spell result: ", end="")
     print(result)
-
+    print()
     print("Testing power amplifier...")
 
     def amplified(target: str, power: int) -> str:
@@ -83,7 +83,7 @@ def main() -> None:
     func = conditional_caster(selection, spell)
     result = func("Dragon", 23)
     print(result)
-
+    print()
     print("Testing spell sequence...")
     func_sequence = spell_sequence([fireball, heal])
     result_sequence = func_sequence("Dragon", 57)
