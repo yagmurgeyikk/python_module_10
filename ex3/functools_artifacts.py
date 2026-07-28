@@ -26,8 +26,8 @@ def spell_reducer(spells: list[int], operation: str) -> int:
 
 def partial_enchanter(
         base_enchantment: Callable
-        [..., str]) -> dict[str, Callable[[str], str]]:
-    enchanter: dict[str, Callable[[str], str]] = {
+        [..., str]) -> dict[str, Callable[..., str]]:
+    enchanter: dict[str, Callable[..., str]] = {
         "fire": partial(base_enchantment, power=50, element="fire"),
         "water": partial(base_enchantment, power=50, element="water"),
         "soil": partial(base_enchantment, power=50, element="soil")
@@ -80,15 +80,15 @@ def main() -> None:
     def base_enchantment(power: int, element: str, target: str) -> str:
         return (f"Applied {power} power {element} enchantment to {target}.")
     test = partial_enchanter(base_enchantment)
-    print(test["soil"]("Earth Golem"))
-    print(test["fire"]("Dragon Shield"))
-
+    print(test["soil"](target="Earth Golem"))
+    print(test["fire"](target="Dragon Shield"))
+    print()
     print("Testing memoized fibonacci...")
     print(f"Fib(0): {memoized_fibonacci(0)}")
     print(f"Fib(1): {memoized_fibonacci(1)}")
     print(f"Fib(10): {memoized_fibonacci(10)}")
     print(f"Fib(15): {memoized_fibonacci(15)}")
-
+    print()
     print("Testing spell dispatcher...")
     func = spell_dispatcher()
     print(f"Damage spell: {func(100)}")
